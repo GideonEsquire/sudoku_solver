@@ -1,33 +1,42 @@
-var PI = 3.1415
-var r = 150;
-var a = PI/2;
-var aVel = 0.0;
-var aAcc = 0.0;
-// var amp = 180;
-// var per = 100;
+var cells = [];
 
 function setup() {
-    background(0);
+    createCanvas(windowWidth, windowHeight);
+    var unit = floor(windowHeight / 10 - 10);
+    
+    strokeWeight(2);
+    for (var i = 0; i < 9; i++) {
+        cells[i] = [];
+        for (var j = 0; j < 9; j++) {
+            cells[i].push(new Cell());
+            rect(unit*i + unit, unit*j + unit,unit,unit);
+        }
+    }
+
+    noFill();
+    strokeWeight(4);
+    for (var i = 0; i < 3; i++) {
+        for (var j = 0; j < 3; j++) {
+            rect(unit*i*3 + unit, unit*j*3 + unit,unit*3,unit*3);
+        }
+    }
+
 
 }
 
 function draw() {
-    var x = r * sin(a);
-    var y = r * cos(a);
 
-    createCanvas(640, 480);
-    translate(width/2, height/2);
-    fill(255);
 
-    stroke(255);
-    line(0,0,x,y);
+}
 
-    ellipse(x,y,50,50);
+function check_row() {
 
-    aAcc = -0.009 * sin(a);
+}
 
-    a += aVel;
-    aVel += aAcc;
+function check_col() {
 
-    aVel *= .99;
+}
+
+function check_block() {
+
 }
