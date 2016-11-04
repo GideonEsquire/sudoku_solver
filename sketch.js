@@ -1,5 +1,10 @@
+// Next, I need to loop through rows, columns, blocks and see if there is only one instance 
+// of an integer per them.
+
 var cells = [];
+var number_drawer_cells = []
 var solved = false;
+var mouse_value = null;
 
 function setup() {
 
@@ -13,7 +18,7 @@ function setup() {
     }
 
     rectMode(CENTER);
-    textSize(unit / 2);
+    textSize(unit / 1.75);
     textAlign(CENTER);
     
     // Draw grid
@@ -26,6 +31,10 @@ function setup() {
             rect(unit*i+unit*1.5, unit*j+unit*1.5,unit,unit);
         }
     }
+    // for (var i = 0; i < 9; i++) {
+    //     number_drawer_cells[i].push(new NumberDrawer(unit*12, unit*i));
+    // }
+    
 
     push();
     noFill();
@@ -44,7 +53,7 @@ function setup() {
 
 function draw() {
 
-    // Columns
+    // Columns Logic
     for (var i = 0; i < 9; i++) {
         for (var j = 0; j < 9; j++) {
             if (cells[i][j].final_value) {
@@ -58,23 +67,41 @@ function draw() {
         }
     }
 
-    // Rows
-    // Need to work on all the logic
-    // NOT WORKING JUST YET
-    for (var j = 0; j < 9; j++) {
-        for (var i = 0; i < 9; i++) {
+    // Rows Logic
+    for (var i = 0; i < 9; i++) {
+        for (var j = 0; j < 9; j++) {
             if (cells[i][j].final_value) {
                 for (var jj = 0; jj < 9; jj++) {
-                    var index = cells[j][jj].possible_values.indexOf(cells[i][j].final_value);
-                    if (!cells[j][jj].final_value && index > -1) {
-                        cells[j][jj].possible_values.splice(index, 1);
+                    var index = cells[jj][j].possible_values.indexOf(cells[i][j].final_value);
+                    if (!cells[jj][j].final_value && index > -1) {
+                        cells[jj][j].possible_values.splice(index, 1);
                      }
                 }
             }
         }
     }
+    
+    // Blocks Logic
+    for (var i = 0; i < 9; i += 3) {
+        for (var j = 0; j < 9; j += 3) {
+            for (var k = 0; k < 3; k++) {
+                for (var m = 0; m < 3; m++) {
+                    if (cells[i + k][j + m].final_value) {
+                        for (var kk = 0; kk < 3; kk++) {
+                            for (var mm = 0; mm < 3; mm++) {
+                                var index = cells[kk+i][mm+j].possible_values.indexOf(cells[i + k][j + m].final_value);
+                                if (!cells[kk+i][mm+j].final_value && index > -1) {
+                                    cells[kk+i][mm+j].possible_values.splice(index, 1);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
-    // logic for printing final values.
+    // Printing final values.
     for (var i = 0; i < 9; i++) {
         for (var j = 0; j < 9; j++) {
             if (cells[i][j].possible_values.length == 1) {
@@ -86,5 +113,15 @@ function draw() {
         }
     }
 
-
 }
+
+// function mousePressed() {
+//     if (NumberDrawer.hits(mouseX, mouseY)) {
+//         mouse_value = NumberDrawer.grabbed_value;
+//     }
+// }
+
+// function mouseReleased() {
+//     //code this- cells[mouse position].final value = mouse_value
+//     mouse_value = null;
+// }
