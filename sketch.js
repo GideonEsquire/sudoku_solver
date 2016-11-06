@@ -2,25 +2,23 @@
 // of an integer per them.
 
 var cells = [];
-var number_drawer_cells = []
+var number_drawer_cells = [];
 var solved = false;
 var mouse_value = null;
 
 function setup() {
 
-    frameRate(5);
-
     // Scaling depending on screen width or height
+    frameRate(5);
     createCanvas(windowWidth, windowHeight);
     var unit = floor(windowHeight / 11);
     if (windowWidth < windowHeight) {
         unit = floor(windowWidth / 11);
     }
-
     rectMode(CENTER);
     textSize(unit / 1.75);
     textAlign(CENTER);
-    
+
     // Draw grid
     push();
     strokeWeight(2);
@@ -31,11 +29,17 @@ function setup() {
             rect(unit*i+unit*1.5, unit*j+unit*1.5,unit,unit);
         }
     }
-    // for (var i = 0; i < 9; i++) {
-    //     number_drawer_cells[i].push(new NumberDrawer(unit*12, unit*i));
-    // }
     
+    // Draw number_drawer
+    for (var i = 0; i < 9; i++) {
+        number_x = unit*10+unit*1.5;
+        number_y = unit*i+unit*1.5;
+        number_drawer_cells.push(new NumberDrawer(number_x, number_y));
+        rect(number_x, number_y, unit, unit);
+        text(i+1, number_x, number_y + floor(windowWidth/98));
+    }
 
+    // Draw block outline
     push();
     noFill();
     strokeWeight(4);
@@ -75,12 +79,12 @@ function draw() {
                     var index = cells[jj][j].possible_values.indexOf(cells[i][j].final_value);
                     if (!cells[jj][j].final_value && index > -1) {
                         cells[jj][j].possible_values.splice(index, 1);
-                     }
+                    }
                 }
             }
         }
     }
-    
+
     // Blocks Logic
     for (var i = 0; i < 9; i += 3) {
         for (var j = 0; j < 9; j += 3) {
@@ -89,7 +93,8 @@ function draw() {
                     if (cells[i + k][j + m].final_value) {
                         for (var kk = 0; kk < 3; kk++) {
                             for (var mm = 0; mm < 3; mm++) {
-                                var index = cells[kk+i][mm+j].possible_values.indexOf(cells[i + k][j + m].final_value);
+                                var index = cells[kk+i][mm+j].possible_values.indexOf(
+                                        cells[i + k][j + m].final_value);
                                 if (!cells[kk+i][mm+j].final_value && index > -1) {
                                     cells[kk+i][mm+j].possible_values.splice(index, 1);
                                 }
@@ -115,13 +120,24 @@ function draw() {
 
 }
 
-// function mousePressed() {
-//     if (NumberDrawer.hits(mouseX, mouseY)) {
-//         mouse_value = NumberDrawer.grabbed_value;
-//     }
-// }
 
-// function mouseReleased() {
-//     //code this- cells[mouse position].final value = mouse_value
-//     mouse_value = null;
-// }
+function mousePressed() {
+    for(var i = 0; i < 9; i++) {
+        if (number_drawer_cells[i].hits(mouseX, mouseY)) {
+            mouse_value = i + 1;
+        }
+    }
+}
+
+
+function mouseReleased() {
+    //code this- cells[mouse position].final value = mouse_value
+    for(var i = 0; i < 9; i++) {
+        for(var j = 0; j < 9; j++) {
+            if(cells[i][j].hits(mouseX, mouseY)) {
+                cells[i][j].final_value = mouse_value;
+            }
+        }
+    }
+    mouse_value = null;
+}
