@@ -15,12 +15,14 @@ function Cell(x, y) {
         pop();
     }
 
-
     this.hits = function(mouse_x, mouse_y) {
         var d = dist(mouse_x, mouse_y, this.x, this.y);
         return d < 40 //need to scale the 40
     }
 
+    this.has_value = function(obj) {
+        return (this.possible_values.indexOf(obj) != -1);
+    }
 
 }
 
