@@ -1,18 +1,12 @@
-funcion NumberDrawer(x, y) {
+function NumberDrawer(x, y) {
     this.x = x;
-    this.y = x;
-    this.cells = []
-    this.grabbed_value = null;
+    this.y = y;
 
     this.draw = function() {
     }
 
-    this.hits = function(x, y) {
-        result = false;
-        for (var i = 0; i < this.cells.length; i++) {
-            // if (
-        }
-        return result;
-        
+    this.hits = function(m_x, m_y) {
+        var d = dist(m_x,m_y,this.x,this.y);
+        return d < 40 //I need to scale the 40
     }
 }

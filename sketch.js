@@ -3,8 +3,8 @@
 
 var cells = [];
 var number_drawer_cells = [];
-var solved = false;
 var mouse_value = null;
+var solved = false;
 
 function setup() {
 
@@ -13,7 +13,7 @@ function setup() {
     createCanvas(windowWidth, windowHeight);
     var unit = floor(windowHeight / 11);
     if (windowWidth < windowHeight) {
-        unit = floor(windowWidth / 11);
+        unit = floor(windowWidth / 13);
     }
     rectMode(CENTER);
     textSize(unit / 1.75);
@@ -29,7 +29,7 @@ function setup() {
             rect(unit*i+unit*1.5, unit*j+unit*1.5,unit,unit);
         }
     }
-    
+
     // Draw number_drawer
     for (var i = 0; i < 9; i++) {
         number_x = unit*10+unit*1.5;
@@ -60,6 +60,7 @@ function draw() {
     // Columns Logic
     for (var i = 0; i < 9; i++) {
         for (var j = 0; j < 9; j++) {
+            // If cell has final remove it from everyone's possible_values
             if (cells[i][j].final_value) {
                 for (var jj = 0; jj < 9; jj++) {
                     var index = cells[i][jj].possible_values.indexOf(cells[i][j].final_value);
@@ -74,11 +75,12 @@ function draw() {
     // Rows Logic
     for (var i = 0; i < 9; i++) {
         for (var j = 0; j < 9; j++) {
+            // If cell has final remove it from everyone's possible_values
             if (cells[i][j].final_value) {
-                for (var jj = 0; jj < 9; jj++) {
-                    var index = cells[jj][j].possible_values.indexOf(cells[i][j].final_value);
-                    if (!cells[jj][j].final_value && index > -1) {
-                        cells[jj][j].possible_values.splice(index, 1);
+                for (var ii = 0; ii < 9; ii++) {
+                    var index = cells[ii][j].possible_values.indexOf(cells[i][j].final_value);
+                    if (!cells[ii][j].final_value && index > -1) {
+                        cells[ii][j].possible_values.splice(index, 1);
                     }
                 }
             }
@@ -109,11 +111,13 @@ function draw() {
     // Printing final values.
     for (var i = 0; i < 9; i++) {
         for (var j = 0; j < 9; j++) {
-            if (cells[i][j].possible_values.length == 1) {
-                cells[i][j].produce_number();
-            }
-            else if (cells[i][j].final_value) {
-                text(cells[i][j].final_value,cells[i][j].x,cells[i][j].y);
+            if (!cells[i][j].calculated) {
+                if (cells[i][j].final_value) {
+                    text(cells[i][j].final_value,cells[i][j].x,cells[i][j].y);
+                }
+                else if (cells[i][j].possible_values.length == 1) {
+                    cells[i][j].produce_number();
+                }
             }
         }
     }
@@ -131,10 +135,10 @@ function mousePressed() {
 
 
 function mouseReleased() {
-    //code this- cells[mouse position].final value = mouse_value
     for(var i = 0; i < 9; i++) {
         for(var j = 0; j < 9; j++) {
             if(cells[i][j].hits(mouseX, mouseY)) {
+                cells[i][j].possible_values = [mouse_value];
                 cells[i][j].final_value = mouse_value;
             }
         }
