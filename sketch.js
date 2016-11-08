@@ -1,10 +1,6 @@
-// Next, I need to loop through rows, columns, blocks and see if there is only one instance 
-// of an integer per them.
-
 var cells = [];
 var number_drawer_cells = [];
 var mouse_value = null;
-var solved = false;
 
 function setup() {
 
@@ -51,11 +47,24 @@ function setup() {
     pop();
     pop();
 
-
 }
 
 
 function draw() {
+
+    // Check to see if the puzzle is solved
+    var calc_sum = 0;
+    for (var i = 0; i < 9; i++) {
+        for (var j = 0; j < 9; j++) {
+            if (cells[i][j].calculated) {
+                calc_sum += 1;
+            }
+        }
+    }
+    if (calc_sum == 81) {
+        console.log('Solved!');
+        noLoop();
+    }
 
     // Columns Logic
     
@@ -161,49 +170,38 @@ function draw() {
         }
     }
 
-    // //only one instance of an int per block
-    // //still buggy
-    // //this is a goddamn mess
-    // //I need to stop trying to put breaks all willy-nilly
-    // //and think my way through the logic
-    // for (var i = 0; i < 9; i += 3) {
-    //     for (var j = 0; j < 9; j += 3) {
-    //         var sum = 0;
-    //         var sentinal = null;
-    //         for (var k = 0; k < 3; k++) {
-    //             if (sum > 1) {
-    //                 break;
-    //             }
-    //             for (var m = 0; m < 3; m++) {
-    //                 if (sum > 1) {
-    //                     sum = 0;
-    //                     break;
-    //                 }
-    //                 for (var val = 0; val < cells[i + k][j + m].possible_values.length; val++) {
-    //                     sentinal = cells[i + k][j + m].possible_values[val];
-    //                     for (var ii = 0; ii < 3; ii++) {
-    //                         if (sum > 1) {
-    //                             sum = 0;
-    //                             break;
-    //                         }
-    //                         for (var jj = 0; jj < 3; jj++) {
-    //                             if (cells[ii][jj].has_value(sentinal)) {
-    //                                 sum += 1;
-    //                             }
-    //                             if (sum > 1) {
-    //                                 break;
-    //                             }
-    //                         }
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //         if (sum == 1) {
-    //             cells[i + k][j + m].possible_values = [sentinal];
-    //             sum = 0;
-    //         }
-    //     }
-    // }
+    //only one instance of an int per block
+    for (var i = 0; i < 9; i += 3) {
+        for (var j = 0; j < 9; j += 3) {
+            for (var k = 0; k < 3; k++) {
+                for (var m = 0; m < 3; m++) {
+                    var sum = 0;
+                    var sentinal = null;
+                    for (var val = 0; val < cells[i + k][j + m].possible_values.length; val++) {
+                        sentinal = cells[i + k][j + m].possible_values[val];
+                        for (var ii = 0; ii < 3; ii++) {
+                            if (sum > 1) {
+                                sum = 0;
+                                break;
+                            }
+                            for (var jj = 0; jj < 3; jj++) {
+                                if (cells[ii + i][jj + j].has_value(sentinal)) {
+                                    sum += 1;
+                                }
+                                if (sum > 1) {
+                                    break;
+                                }
+                            }
+                        }
+                        if (sum == 1) {
+                            cells[i + k][j + m].possible_values = [sentinal];
+                            sum = 0;
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     // Printing final values.
     for (var i = 0; i < 9; i++) {
@@ -211,9 +209,11 @@ function draw() {
             if (!cells[i][j].calculated) {
                 if (cells[i][j].final_value) {
                     text(cells[i][j].final_value,cells[i][j].x,cells[i][j].y);
+                    cells[i][j].calculated = true;
                 }
                 else if (cells[i][j].possible_values.length == 1) {
                     cells[i][j].produce_number();
+                    cells[i][j].calculated = true;
                 }
             }
         }
