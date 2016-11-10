@@ -1,6 +1,7 @@
 var cells = [];
 var number_drawer_cells = [];
 var mouse_value = null;
+var clicked = false;
 
 function setup() {
 
@@ -223,22 +224,20 @@ function draw() {
 
 
 function mousePressed() {
-    for(var i = 0; i < 9; i++) {
+    for (var i = 0; i < 9; i++) {
         if (number_drawer_cells[i].hits(mouseX, mouseY)) {
             mouse_value = i + 1;
+            clicked = true;
         }
     }
-}
-
-
-function mouseReleased() {
-    for(var i = 0; i < 9; i++) {
-        for(var j = 0; j < 9; j++) {
-            if(cells[i][j].hits(mouseX, mouseY)) {
+    for (var i = 0; i < 9; i++) {
+        for (var j = 0; j < 9; j++) {
+            if (clicked && cells[i][j].hits(mouseX, mouseY)) {
                 cells[i][j].possible_values = [mouse_value];
                 cells[i][j].final_value = mouse_value;
+                mouse_value = null;
+                clicked = false;
             }
         }
     }
-    mouse_value = null;
 }
